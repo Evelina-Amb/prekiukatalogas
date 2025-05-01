@@ -26,6 +26,11 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+//katalogas
+Route::get('/katalogas', function () {
+    return view('katalogas');
+})->middleware(['auth'])->name('katalogas');
+
 
 // Route for updating user information (name, email, etc.)
 Route::put('/profile', [ProfileController::class, 'update'])->middleware('auth')->name('profile.update');
