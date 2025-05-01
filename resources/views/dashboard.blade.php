@@ -41,7 +41,7 @@
                         </div>
 
                         <div class="mt-6">
-                         <button type="submit" style="background-color: #2563eb; color: white;" class="px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">Update Info</button>
+                         <button type="submit" style="background-color: #2563eb; color: white;" class="px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">Atnaujinti</button>
 						</div>
 						<br>
                     </form>
@@ -71,7 +71,7 @@
                         </div>
 
                         <div class="mt-6">
-                            <button type="submit" style="background-color: #2563eb; color: white;" class="px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">Update Info</button>
+                            <button type="submit" style="background-color: #2563eb; color: white;" class="px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">Atnaujinti</button>
                         </div>
                     </form>
                 </div>
