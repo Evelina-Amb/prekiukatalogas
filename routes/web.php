@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\Auth\ProfileController;
+use App\Http\Controllers\Auth\PasswordChangeController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Http\Controllers\Profile\PasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,13 +19,21 @@ use App\Models\User;
 
 // Home page
 Route::get('/', function () {
-    return view('welcome');
+    return view('Dashboard');
 });
 
 // Dashboard — only for authenticated + verified users
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+// Route for updating user information (name, email, etc.)
+Route::put('/profile', [ProfileController::class, 'update'])->middleware('auth')->name('profile.update');
+
+// Route for changing the password
+Route::middleware(['auth'])->group(function () {
+    Route::put('/profile/password', [PasswordController::class, 'update'])->name('password.update');
+});
 
 // Custom email verification route (works even if user is logged out)
 Route::get('/custom-verify/{id}/{hash}', function (Request $request, $id, $hash) {
