@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Http\Controllers\Profile\PasswordController;
+use App\Http\Controllers\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,6 +61,8 @@ Route::get('/custom-verify/{id}/{hash}', function (Request $request, $id, $hash)
 
     return redirect('/dashboard')->with('status', 'Email verified!');
 })->middleware(['signed'])->name('custom.verification');
+
+Route::get('/katalogas', [ProductController::class, 'index'])->name('katalogas');
 
 // Include Breeze's auth routes (login, register, etc.)
 require __DIR__.'/auth.php';
