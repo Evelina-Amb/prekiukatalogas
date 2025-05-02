@@ -29,14 +29,20 @@ class CompanyFactory extends Factory
     {
 		
 		$companyName = array_shift(self::$companyNames);
-        
+		$ikurimoMetai = $this->faker->numberBetween(1980, 2025);
+		$city = \App\Models\City::inRandomOrder()->first() ?? \App\Models\City::factory()->create();
+		$cityId = str_pad($city->id, 2, '0', STR_PAD_LEFT); // Jei ID vienženklis, prideda nulį
+		$randomPart = str_pad((string)rand(0, 999), 3, '0', STR_PAD_LEFT);
+        $companyCode = $cityId . $ikurimoMetai . $randomPart;
+		
 		return [
 			'name' => $companyName,
-            'company_code' => $this->faker->unique()->numerify('########'),
+			'ikurimo_metai' =>$ikurimoMetai, 
+            'company_code' =>$companyCode,
             'director' => $this->faker->name,
-            'phone' => $this->faker->phoneNumber,
-            'adresas' => $this->faker->unique()->address,
-            'city_id' => \App\Models\City::inRandomOrder()->first()?->id ?? \App\Models\City::factory(),
+			'phone' => $this->faker->phoneNumber,
+			'adresas' => $this->faker->unique()->address,
+			'city_id' => $city->id,
         ];
     }
 }
