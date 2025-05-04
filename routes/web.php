@@ -64,5 +64,4 @@ Route::get('/custom-verify/{id}/{hash}', function (Request $request, $id, $hash)
 
 Route::get('/katalogas', [ProductController::class, 'index'])->name('katalogas');
 
-// Include Breeze's auth routes (login, register, etc.)
 require __DIR__.'/auth.php';
