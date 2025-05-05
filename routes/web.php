@@ -41,6 +41,9 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/profile/password', [PasswordController::class, 'update'])->name('password.update');
 });
 
+// Route for pdf
+Route::get('/katalogas/pdf', [ProductController::class, 'exportPdf'])->name('katalogas.pdf');
+
 // Custom email verification route (works even if user is logged out)
 Route::get('/custom-verify/{id}/{hash}', function (Request $request, $id, $hash) {
     $user = User::findOrFail($id);
