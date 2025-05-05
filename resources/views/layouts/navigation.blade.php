@@ -14,8 +14,36 @@
                         {{ __('katalogas') }}
                     </x-nav-link>
                 </div>
-            </div>
+@if (request()->routeIs('katalogas'))	
+<div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex items-center">
+    <button 
+        id="filter-toggle-button"
+        type="button" 
+        onclick="toggleFilters()" 
+        style="background-color: #1e40af; color: white; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer;">
+        Filtrai
+    </button>
+</div>
+<div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex items-center">
+    <form method="GET" action="{{ route('katalogas.pdf') }}">
+        {{-- Retain all filters when submitting --}}
+        @foreach(request()->all() as $key => $value)
+            @if(is_array($value))
+                @foreach($value as $item)
+                    <input type="hidden" name="{{ $key }}[]" value="{{ $item }}">
+                @endforeach
+            @else
+                <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+            @endif
+        @endforeach
 
+        <button type="submit"
+            style="background-color: #1e40af; color: white; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer;">
+            PDF
+        </button>
+    </form>
+</div> @endif
+</div>
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ml-6">
                 <x-dropdown align="right" width="48">
