@@ -4,15 +4,6 @@
             {{ __('Profile') }}
         </h2>
     </x-slot>
-<div style="position: fixed; top: 60px; left: 0px; z-index: 1000;">
-    <button 
-        id="filter-toggle-button"
-        type="button" 
-        onclick="toggleFilters()" 
-        style="background-color: #1e40af; color: white; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer;">
-        Filtrai
-    </button>
-</div>
 <style>
     .form-button,
     .form-button-link {
