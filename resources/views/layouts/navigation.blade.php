@@ -42,11 +42,20 @@
 </div> 
 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex items-center">
     <button 
-        id="filter-toggle-button"
+        id="filter-toggle-add"
         type="button" 
         onclick="toggleAdd()" 
         style="background-color: #1e40af; color: white; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer;">
         Pridėti
+    </button>
+</div>
+<div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex items-center">
+    <button 
+        id="filter-toggle-edit"
+        type="button" 
+        onclick="toggleUpdate()" 
+        style="background-color: #1e40af; color: white; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer;">
+        Atnaujinti
     </button>
 </div>@endif
 </div>
