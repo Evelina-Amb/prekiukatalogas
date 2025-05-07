@@ -122,4 +122,21 @@ public function store(Request $request)
 
     return redirect()->route('katalogas')->with('success', 'Produktas pridėtas.');
 }
+
+public function update(Request $request, $id)
+{
+    $product = Product::findOrFail($id);
+
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'price' => 'required|numeric',
+        'quantity' => 'required|integer',
+        'description' => 'required|string',
+        'category_id' => 'required|exists:categories,id',
+    ]);
+
+    $product->update($validated);
+
+    return redirect()->back()->with('success', 'Produktas atnaujintas sėkmingai.');
+}
 }
