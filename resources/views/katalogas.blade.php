@@ -202,6 +202,108 @@
         });
     }
 </script>
+<script>
+function toggleUpdate() {
+    const modal = document.getElementById('update-product-modal');
+    modal.classList.toggle('hidden');
+    document.getElementById('update_company_code').value = '';
+    document.getElementById('update-code-error').classList.add('hidden');
+    document.getElementById('company-products-table').innerHTML = '';
+    document.getElementById('company-products-table').classList.add('hidden');
+    document.body.style.overflow = modal.classList.contains('hidden') ? '' : 'hidden';
+}
+
+function verifyUpdateCompanyCode() {
+    const code = document.getElementById('update_company_code').value;
+
+    fetch("{{ route('company.verify') }}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ code: code })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            displayCompanyProductsInUpdateModal(data.company.id);
+            document.getElementById('update-code-error').classList.add('hidden');
+
+            document.getElementById('update-step1').classList.add('hidden');
+            document.getElementById('update-step2').classList.remove('hidden');
+        } else {
+            document.getElementById('update-code-error').classList.remove('hidden');
+        }
+    })
+    .catch(() => {
+        document.getElementById('update-code-error').classList.remove('hidden');
+    });
+}
+
+function displayCompanyProductsInUpdateModal(companyId) {
+    const products = @json($products);
+    const container = document.getElementById('company-products-table');
+
+    let tableHtml = '<table class="w-full mt-4 border-t"><thead><tr>' +
+        '<th class="px-2 py-1 text-left">Pavadinimas</th>' +
+        '<th class="px-2 py-1 text-left">Kaina</th>' +
+        '<th class="px-2 py-1 text-left">Kiekis</th>' +
+        '<th class="px-2 py-1 text-left">Veiksmai</th>' +
+        '</tr></thead><tbody>';
+
+    let found = false;
+    products.forEach(product => {
+        if (product.company_id === companyId) {
+            found = true;
+            tableHtml += `
+                <tr class="border-t">
+                    <td class="px-2 py-1">${product.name}</td>
+                    <td class="px-2 py-1">${product.price} €</td>
+                    <td class="px-2 py-1">${product.quantity}</td>
+                    <td class="px-2 py-1">
+                        <button onclick="editProduct(${product.id})" class="form-button text-sm px-2 py-1">Redaguoti</button>
+                    </td>
+                </tr>
+            `;
+        }
+    });
+
+    if (!found) {
+        tableHtml += `<tr><td colspan="4" class="px-2 py-2 text-center text-gray-500">Nėra produktų šiai įmonei.</td></tr>`;
+    }
+
+    tableHtml += '</tbody></table>';
+    container.innerHTML = tableHtml;
+    container.classList.remove('hidden');
+}
+</script>
+<script>
+const allProducts = @json($products);
+
+function toggleEditModal() {
+    const modal = document.getElementById('edit-product-modal');
+    modal.classList.toggle('hidden');
+    document.body.style.overflow = modal.classList.contains('hidden') ? '' : 'hidden';
+}
+
+function editProduct(productId) {
+    const product = allProducts.find(p => p.id === productId);
+    if (!product) return;
+
+    document.getElementById('edit_product_id').value = product.id;
+    document.getElementById('edit_product_name').value = product.name;
+    document.getElementById('edit_product_price').value = product.price;
+    document.getElementById('edit_product_quantity').value = product.quantity;
+    document.getElementById('edit_product_description').value = product.description;
+    document.getElementById('edit_product_category').value = product.category_id;
+
+    const form = document.getElementById('edit-product-form');
+    form.action = `/products/${product.id}`;
+
+    toggleEditModal();
+}
+</script>
 <br><br><br><br><br>
     <div class="py-8 max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white shadow-md rounded-lg overflow-hidden">
@@ -278,6 +380,55 @@
                 </div>
             </form>
         </div>
+    </div>
+</div>
+<div id="update-product-modal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-xl relative">
+        <button onclick="toggleUpdate()" class="absolute top-0 right-0 m-2 text-xl rounded-full w-8 h-8 flex items-center">&times;</button>
+        <div id="update-step1">
+        <div>
+            <label for="update_company_code" class="block mb-2 font-semibold">Įmonės kodas:</label>
+            <input type="text" id="update_company_code" class="border rounded px-3 py-2 w-full mb-4">
+            <p id="update-code-error" class="text-red-600 text-sm hidden mb-4">Neteisingas kodas</p>
+            <button onclick="verifyUpdateCompanyCode()" class="form-button">Tęsti</button>
+        </div>
+		</div>
+        <div id="company-products-table" class="mt-4 hidden"></div>
+    </div>
+</div>
+<div id="edit-product-modal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-xl relative">
+        <button onclick="toggleEditModal()" class="absolute top-0 right-0 m-2 text-xl rounded-full w-8 h-8 flex items-center">&times;</button>
+        <div id="update-step2" class="hidden">
+        <form id="edit-product-form" method="POST">
+            @csrf
+            @method('PUT')
+            <input type="hidden" name="id" id="edit_product_id">
+
+            <label class="block font-semibold mt-2">Produkto pavadinimas:</label>
+            <input type="text" name="name" id="edit_product_name" class="border rounded px-3 py-2 w-full" required>
+
+            <label class="block font-semibold mt-4">Kaina (€):</label>
+            <input type="number" step="0.01" name="price" id="edit_product_price" class="border rounded px-3 py-2 w-full" required>
+
+            <label class="block font-semibold mt-4">Kiekis:</label>
+            <input type="number" name="quantity" id="edit_product_quantity" class="border rounded px-3 py-2 w-full" required>
+
+            <label class="block font-semibold mt-4">Aprašymas:</label>
+            <textarea name="description" id="edit_product_description" class="border rounded px-3 py-2 w-full" rows="3" required></textarea>
+
+            <label class="block font-semibold mt-4">Kategorija:</label>
+            <select name="category_id" id="edit_product_category" class="border rounded px-3 py-2 w-full" required>
+                @foreach($categories as $cat)
+                    <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                @endforeach
+            </select>
+
+            <div class="mt-6 text-right">
+                <button type="submit" class="form-button">Atnaujinti</button>
+            </div>
+        </form>
+		</div>
     </div>
 </div>
 </x-app-layout>
