@@ -44,6 +44,10 @@ Route::middleware(['auth'])->group(function () {
 // Route for pdf
 Route::get('/katalogas/pdf', [ProductController::class, 'exportPdf'])->name('katalogas.pdf');
 
+//Route for new produktas
+Route::post('/verify-company', [ProductController::class, 'verifyCode'])->name('company.verify');
+Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+
 // Custom email verification route (works even if user is logged out)
 Route::get('/custom-verify/{id}/{hash}', function (Request $request, $id, $hash) {
     $user = User::findOrFail($id);
