@@ -48,6 +48,12 @@ Route::get('/katalogas/pdf', [ProductController::class, 'exportPdf'])->name('kat
 Route::post('/verify-company', [ProductController::class, 'verifyCode'])->name('company.verify');
 Route::post('/products', [ProductController::class, 'store'])->name('products.store');
 
+// Route for update
+Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
+Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
+Route::post('/products/update/{product}', [ProductController::class, 'update'])->name('products.update');
+Route::put('/products/{id}', [ProductController::class, 'update'])->name('products.update');
+
 // Custom email verification route (works even if user is logged out)
 Route::get('/custom-verify/{id}/{hash}', function (Request $request, $id, $hash) {
     $user = User::findOrFail($id);
