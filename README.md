@@ -5,3 +5,4 @@
 5. Pridėtas katalogo filtravimas.
 6. Pridėtas pdf atsisiuntimas katalogo (net filtruoto). Plius perkeltas filtrų mygtukas i nav, matomas tik katalogas sekcijoje pradingsta kitose, taip pat su pdf mygtuku.
 7. Adminas gauna laiška, kaip autentifikuojamas naujas vartotojas.
+8. Galimybė pridėti naujus produktus arba atnaujinti esančius.
