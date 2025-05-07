@@ -88,4 +88,38 @@ public function exportPdf(Request $request)
     $pdf = PDF::loadView('pdf.katalogas', ['products' => $products]);
     return $pdf->download('produktai.pdf');
 }
+
+public function verifyCode(Request $request)
+{
+    $company = \App\Models\Company::where('company_code', $request->code)->first();
+
+    if (!$company) {
+        return response()->json(['success' => false]);
+    }
+
+    return response()->json([
+        'success' => true,
+        'company' => [
+            'id' => $company->id,
+            'name' => $company->name,
+            'city_id' => $company->city_id
+        ]
+    ]);
+}
+
+public function store(Request $request)
+{
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'price' => 'required|numeric',
+        'quantity' => 'required|integer',
+        'description' => 'required|string',
+        'category_id' => 'required|exists:categories,id',
+        'company_id' => 'required|exists:companies,id',
+    ]);
+
+    \App\Models\Product::create($validated);
+
+    return redirect()->route('katalogas')->with('success', 'Produktas pridėtas.');
+}
 }
