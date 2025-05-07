@@ -22,7 +22,6 @@
     .form-button-link:hover {
         background-color: #1a3694;
     }
-}
 </style>
 <div id="filters-section" class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center">
     <div class="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
@@ -47,7 +46,7 @@
 <div class="grid grid-cols-2 gap-6">
     <div>
         <label for="quantity_min" class="block text-sm font-medium">Kiekis nuo:</label>
-        <input
+        <input class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             type="number"
             name="quantity_min"
             id="quantity_min"
@@ -57,7 +56,7 @@
     </div>
     <div>
         <label for="quantity_max" class="block text-sm font-medium">Kiekis iki:</label>
-        <input
+        <input class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             type="number"
             name="quantity_max"
             id="quantity_max"
@@ -71,15 +70,13 @@
     <div class="grid grid-cols-2 gap-6">
         <div>
             <label for="price_min" class="block text-sm font-medium mb-1">Kaina nuo:</label>
-            <input type="number" name="price_min" step="0.01" id="price_min" 
-                   value="{{ request('price_min') }}" 
-                   class="border rounded px-3 py-2 w-32">
+            <input type="number" name="price_min" step="0.01" id="price_min" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
+                   value="{{ request('price_min') }}">
         </div>
         <div>
             <label for="price_max" class="block text-sm font-medium mb-1">Kaina iki:</label>
-            <input type="number" name="price_max" step="0.01" id="price_max" 
-                   value="{{ request('price_max') }}" 
-                   class="border rounded px-3 py-2 w-32">
+            <input type="number" name="price_max" step="0.01" id="price_max" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                   value="{{ request('price_max') }}">
         </div>
     </div>
 
@@ -144,21 +141,67 @@
 <script>
     function toggleFilters() {
         const section = document.getElementById('filters-section');
-        const body = document.body;
-        const filterBtn = document.getElementById('filter-toggle-button');
+        if (!section) return;
 
-        section.classList.toggle('hidden');
-
-        if (!section.classList.contains('hidden')) {
-            body.style.overflow = 'hidden';
-            filterBtn.style.display = 'none';
+        if (section.classList.contains('hidden')) {
+            section.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
         } else {
-            body.style.overflow = '';
-            filterBtn.style.display = 'block';
+            section.classList.add('hidden');
+            document.body.style.overflow = '';
         }
     }
 </script>
+<script>
+    document.addEventListener('click', function (event) {
+        const modal = document.getElementById('filters-section');
+        const isVisible = modal && !modal.classList.contains('hidden');
 
+        if (!isVisible) return;
+
+        if (!modal.querySelector('form')?.contains(event.target) && !event.target.closest('button[onclick="toggleFilters()"]')) {
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+    });
+</script>
+<script>
+    function toggleAdd() {
+        const modal = document.getElementById('add-product-modal');
+        modal.classList.toggle('hidden');
+        document.getElementById('step1').classList.remove('hidden');
+        document.getElementById('step2').classList.add('hidden');
+        document.getElementById('company_code').value = '';
+        document.getElementById('code-error').classList.add('hidden');
+    }
+
+    function verifyCompanyCode() {
+        const code = document.getElementById('company_code').value;
+
+        fetch("{{ route('company.verify') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ code: code })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('company_id').value = data.company.id;
+                document.getElementById('city_id').value = data.company.city_id;
+                document.getElementById('step1').classList.add('hidden');
+                document.getElementById('step2').classList.remove('hidden');
+            } else {
+                document.getElementById('code-error').classList.remove('hidden');
+            }
+        })
+        .catch(() => {
+            document.getElementById('code-error').classList.remove('hidden');
+        });
+    }
+</script>
 <br><br><br><br><br>
     <div class="py-8 max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white shadow-md rounded-lg overflow-hidden">
@@ -194,4 +237,47 @@
             </table>
         </div>
     </div><br>
+	
+<div id="add-product-modal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center">
+		<div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-xl relative">
+        <button onclick="toggleAdd()" class="absolute top-0 right-0 m-2 text-xl rounded-full w-8 h-8 flex items-center">&times;</button>
+		<div id="step1">
+            <label for="company_code" class="block mb-2 font-semibold">Įmonės kodas:</label>
+            <input type="text" id="company_code" class="border rounded px-3 py-2 w-full mb-4">
+            <p id="code-error" class="text-red-600 text-sm hidden mb-4">Neteisingas kodas</p>
+            <button onclick="verifyCompanyCode()" class="form-button">Tęsti</button>
+        </div>
+
+        <div id="step2" class="hidden">
+            <form id="add-product-form" method="POST" action="{{ route('products.store') }}">
+                @csrf
+                <input type="hidden" name="company_id" id="company_id">
+                <input type="hidden" name="city_id" id="city_id">
+
+                <label class="block mt-4 font-semibold">Produkto pavadinimas:</label>
+                <input type="text" name="name" class="border rounded px-3 py-2 w-full" required>
+
+                <label class="block mt-4 font-semibold">Kaina (€):</label>
+                <input type="number" name="price" step="0.01" class="border rounded px-3 py-2 w-full" required>
+
+                <label class="block mt-4 font-semibold">Kiekis:</label>
+                <input type="number" name="quantity" class="border rounded px-3 py-2 w-full" required>
+
+                <label class="block mt-4 font-semibold">Aprašymas:</label>
+                <textarea name="description" class="border rounded px-3 py-2 w-full" rows="3" required></textarea>
+
+                <label class="block mt-4 font-semibold">Kategorija:</label>
+                <select name="category_id" class="border rounded px-3 py-2 w-full" required>
+                    @foreach($categories as $cat)
+                        <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                    @endforeach
+                </select>
+
+                <div class="mt-6 flex justify-between">
+                    <button type="submit" class="form-button">Pridėti</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 </x-app-layout>
