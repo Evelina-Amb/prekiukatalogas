@@ -18,4 +18,14 @@ class Product extends Model
     {
         return $this->belongsTo(Company::class);
     }
+protected $fillable = [
+    'name',
+    'price',
+    'quantity',
+    'description',
+    'category_id',
+    'company_id',
+    'city_id',
+];
+
 }
