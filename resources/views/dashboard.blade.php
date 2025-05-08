@@ -41,7 +41,7 @@
                         </div>
 
                         <div class="mt-6">
-                         <button type="submit" style="background-color: #2563eb; color: white;" class="px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">Atnaujinti</button>
+                         <button type="submit" style="background-color: #2563eb; color: white;" class="px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">Update Info</button>
 						</div>
 						<br>
                     </form>
@@ -59,19 +59,28 @@
                             <label for="current_password" class="block text-sm font-medium text-gray-700">Dabartinis slaptažodis</label>
                             <input type="password" id="current_password" name="current_password" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
                         </div>
-
+<!-- Esamo slaptažodžio klaida -->
+@error('current_password')
+    <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+@enderror
                         <div class="mt-4">
-                            <label for="new_password" class="block text-sm font-medium text-gray-700">Naujas slaptažodis</label>
+                            <label for="password" class="block text-sm font-medium text-gray-700">Naujas slaptažodis</label>
                             <input type="password" id="new_password" name="new_password" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
                         </div>
-
+<!-- Naujo slaptažodžio klaida -->
+@error('new_password')
+    <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+@enderror
                         <div class="mt-4">
-                            <label for="new_password_confirmation" class="block text-sm font-medium text-gray-700">Pakartokite nauja slaptažodi</label>
+                            <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Pakartokite nauja slaptažodi</label>
                             <input type="password" id="new_password_confirmation" name="new_password_confirmation" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
                         </div>
-
+<!-- Naujo slaptažodžio patvirtinimo klaida -->
+@error('new_password_confirmation')
+    <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+@enderror
                         <div class="mt-6">
-                            <button type="submit" style="background-color: #2563eb; color: white;" class="px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">Atnaujinti</button>
+                            <button type="submit" style="background-color: #2563eb; color: white;" class="px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">Keisti slaptažodį</button>
                         </div>
                     </form>
                 </div>
