@@ -83,4 +83,8 @@ Route::get('/custom-verify/{id}/{hash}', function (Request $request, $id, $hash)
     return redirect('/dashboard')->with('status', 'Email verified!');
 })->middleware(['signed'])->name('custom.verification');
 
+Route::get('/katalogas', [ProductController::class, 'index'])
+->middleware(['auth', 'verified'])
+->name('katalogas');
+
 require __DIR__.'/auth.php';
